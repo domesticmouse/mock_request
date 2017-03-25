@@ -20,7 +20,7 @@ class MockHttpRequest
 
   @override
   final HttpConnectionInfo connectionInfo =
-      new MockHttpConnectionInfo(remoteAddress: InternetAddress.ANY_IP_V4);
+      new MockHttpConnectionInfo(remoteAddress: InternetAddress.LOOPBACK_IP_V4);
 
   @override
   final MockHttpResponse response = new MockHttpResponse();
