@@ -52,4 +52,10 @@ main() {
     var rs = rq.response;
     expect(await rs.transform(UTF8.decoder).join(), equals(JSON.encode(true)));
   });
+
+  test('requested uri', () {
+    var rq = new MockHttpRequest('GET', Uri.parse('/mock'));
+    expect(rq.uri.toString(), '/mock');
+    expect(rq.requestedUri.toString(), 'http://example.com/mock');
+  });
 }

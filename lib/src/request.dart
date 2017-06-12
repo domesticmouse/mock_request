@@ -12,6 +12,7 @@ class MockHttpRequest
   BytesBuilder _buf;
   final Completer _done = new Completer();
   final LockableMockHttpHeaders _headers = new LockableMockHttpHeaders();
+  Uri _requestedUri;
   MockHttpSession _session;
   final StreamController<List<int>> _stream = new StreamController<List<int>>();
 
@@ -57,7 +58,20 @@ class MockHttpRequest
   HttpHeaders get headers => _headers;
 
   @override
-  Uri get requestedUri => uri;
+  Uri get requestedUri {
+    if (_requestedUri != null)
+      return _requestedUri;
+    else
+      return _requestedUri = new Uri(
+          scheme: 'http',
+          host: 'example.com',
+          path: uri.path,
+          query: uri.query);
+  }
+
+  void set requestedUri(Uri value) {
+      _requestedUri = value;
+  }
 
   @override
   String protocolVersion;
@@ -140,12 +154,12 @@ class MockHttpRequest
       _stream.stream.asBroadcastStream(onListen: onListen, onCancel: onCancel);
 
   @override
-  Stream asyncExpand<E>(Stream convert(List<int> event)) => _stream.stream
-      .asyncExpand(convert);
+  Stream asyncExpand<E>(Stream convert(List<int> event)) =>
+      _stream.stream.asyncExpand(convert);
 
   @override
-  Stream
-      asyncMap<E>(convert(List<int> event)) => _stream.stream.asyncMap(convert);
+  Stream asyncMap<E>(convert(List<int> event)) =>
+      _stream.stream.asyncMap(convert);
 
   @override
   Future<bool> contains(Object needle) => _stream.stream.contains(needle);
@@ -166,8 +180,8 @@ class MockHttpRequest
       _stream.stream.every(test);
 
   @override
-  Stream expand<S>(Iterable convert(List<int> value)) => _stream.stream
-      .expand(convert);
+  Stream expand<S>(Iterable convert(List<int> value)) =>
+      _stream.stream.expand(convert);
 
   @override
   Future<List<int>> get first => _stream.stream.first;
@@ -218,8 +232,8 @@ class MockHttpRequest
           cancelOnError: cancelOnError == true);
 
   @override
-  Stream
-      map<S>(dynamic convert(List<int> event)) => _stream.stream.map(convert);
+  Stream map<S>(dynamic convert(List<int> event)) =>
+      _stream.stream.map(convert);
 
   @override
   Future pipe(StreamConsumer<List<int>> streamConsumer) =>
@@ -263,8 +277,8 @@ class MockHttpRequest
   Future<Set<List<int>>> toSet() => _stream.stream.toSet();
 
   @override
-  Stream transform<S>(StreamTransformer streamTransformer) => _stream.stream
-      .transform(streamTransformer);
+  Stream transform<S>(StreamTransformer streamTransformer) =>
+      _stream.stream.transform(streamTransformer);
 
   @override
   Stream<List<int>> where(bool test(List<int> event)) =>
