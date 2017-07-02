@@ -1,9 +1,9 @@
 # mock_request
 
-[![version 1.0.1](https://img.shields.io/badge/pub-1.0.1-brightgreen.svg)](https://pub.dartlang.org/packages/mock_request)
+[![Pub](https://img.shields.io/pub/v/mock_request.svg)](https://pub.dartlang.org/packages/mock_request)
 [![build status](https://travis-ci.org/thosakwe/mock_request.svg)](https://travis-ci.org/thosakwe/mock_request)
 
-Mock dart:io HttpRequests, HttpResponses, HttpHeaders, etc.
+Manufacture dart:io HttpRequests, HttpResponses, HttpHeaders, etc.
 This makes it possible to test server-side Dart applications without
 having to ever bind to a port.
 

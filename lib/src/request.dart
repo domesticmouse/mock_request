@@ -20,11 +20,11 @@ class MockHttpRequest
   final List<Cookie> cookies = [];
 
   @override
-  final HttpConnectionInfo connectionInfo =
+  HttpConnectionInfo connectionInfo =
       new MockHttpConnectionInfo(remoteAddress: InternetAddress.LOOPBACK_IP_V4);
 
   @override
-  final MockHttpResponse response = new MockHttpResponse();
+  MockHttpResponse response = new MockHttpResponse();
 
   @override
   HttpSession get session => _session;

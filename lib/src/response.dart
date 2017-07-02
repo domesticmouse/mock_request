@@ -16,7 +16,7 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   final List<Cookie> cookies = [];
 
   @override
-  final HttpConnectionInfo connectionInfo =
+  HttpConnectionInfo connectionInfo =
       new MockHttpConnectionInfo(remoteAddress: InternetAddress.ANY_IP_V4);
 
   /// [copyBuffer] corresponds to `copy` on the [BytesBuilder] constructor.
