@@ -1,6 +1,7 @@
+import 'dart:collection';
 import 'dart:io';
 
-class MockHttpSession extends HttpSession {
+class MockHttpSession extends MapBase implements HttpSession {
   final Map _data = {};
 
   @override

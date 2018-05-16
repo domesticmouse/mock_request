@@ -97,7 +97,7 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
     await flush();
     _stream.close();
     _done.complete();
-    return await _done.future;
+    //return await _done.future;
   }
 
   @override

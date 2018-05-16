@@ -6,7 +6,7 @@ import 'lockable_headers.dart';
 import 'response.dart';
 import 'session.dart';
 
-class MockHttpRequest
+class MockHttpRequest extends Stream<List<int>>
     implements HttpRequest, StreamSink<List<int>>, StringSink {
   int _contentLength = 0;
   BytesBuilder _buf;
@@ -70,7 +70,7 @@ class MockHttpRequest
   }
 
   void set requestedUri(Uri value) {
-      _requestedUri = value;
+    _requestedUri = value;
   }
 
   @override
@@ -154,11 +154,11 @@ class MockHttpRequest
       _stream.stream.asBroadcastStream(onListen: onListen, onCancel: onCancel);
 
   @override
-  Stream asyncExpand<E>(Stream convert(List<int> event)) =>
+  Stream<E> asyncExpand<E>(Stream<E> convert(List<int> event)) =>
       _stream.stream.asyncExpand(convert);
 
   @override
-  Stream asyncMap<E>(convert(List<int> event)) =>
+  Stream<E> asyncMap<E>(FutureOr<E> convert(List<int> event)) =>
       _stream.stream.asyncMap(convert);
 
   @override
@@ -170,7 +170,7 @@ class MockHttpRequest
       _stream.stream.distinct(equals);
 
   @override
-  Future drain<E>([dynamic futureValue]) => _stream.stream.drain(futureValue);
+  Future<E> drain<E>([E futureValue]) => _stream.stream.drain(futureValue);
 
   @override
   Future<List<int>> elementAt(int index) => _stream.stream.elementAt(index);
@@ -180,19 +180,20 @@ class MockHttpRequest
       _stream.stream.every(test);
 
   @override
-  Stream expand<S>(Iterable convert(List<int> value)) =>
+  Stream<S> expand<S>(Iterable convert(List<int> value)) =>
       _stream.stream.expand(convert);
 
   @override
   Future<List<int>> get first => _stream.stream.first;
 
   @override
-  Future firstWhere(bool test(List<int> element), {Object defaultValue()}) =>
-      _stream.stream.firstWhere(test, defaultValue: defaultValue);
+  Future<List<int>> firstWhere(bool test(List<int> element),
+          {List<int> orElse()}) =>
+      _stream.stream.firstWhere(test, orElse: orElse);
 
   @override
-  Future fold<S>(dynamic initialValue,
-          dynamic combine(dynamic previous, List<int> element)) =>
+  Future<S> fold<S>(S initialValue,
+          S combine(S previous, List<int> element)) =>
       _stream.stream.fold(initialValue, combine);
 
   @override
@@ -217,8 +218,8 @@ class MockHttpRequest
   Future<List<int>> get last => _stream.stream.last;
 
   @override
-  Future lastWhere(bool test(List<int> element), {Object defaultValue()}) =>
-      _stream.stream.lastWhere(test, defaultValue: defaultValue);
+  Future<List<int>> lastWhere(bool test(List<int> element), {List<int> orElse()}) =>
+      _stream.stream.lastWhere(test, orElse: orElse);
 
   @override
   Future<int> get length => _stream.stream.length;
@@ -232,7 +233,7 @@ class MockHttpRequest
           cancelOnError: cancelOnError == true);
 
   @override
-  Stream map<S>(dynamic convert(List<int> event)) =>
+  Stream<S> map<S>(S convert(List<int> event)) =>
       _stream.stream.map(convert);
 
   @override
@@ -248,8 +249,8 @@ class MockHttpRequest
   Future<List<int>> get single => _stream.stream.single;
 
   @override
-  Future<List<int>> singleWhere(bool test(List<int> element)) =>
-      _stream.stream.singleWhere(test);
+  Future<List<int>> singleWhere(bool test(List<int> element), {List<int> orElse()}) =>
+      _stream.stream.singleWhere(test, orElse: orElse);
 
   @override
   Stream<List<int>> skip(int count) => _stream.stream.skip(count);
@@ -277,7 +278,7 @@ class MockHttpRequest
   Future<Set<List<int>>> toSet() => _stream.stream.toSet();
 
   @override
-  Stream transform<S>(StreamTransformer streamTransformer) =>
+  Stream<S> transform<S>(StreamTransformer<List<int>, S> streamTransformer) =>
       _stream.stream.transform(streamTransformer);
 
   @override

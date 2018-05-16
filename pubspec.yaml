@@ -1,9 +1,10 @@
 name: mock_request
-version: 1.0.2
+version: 1.0.3
 description: Manufacture dart:io HttpRequests, HttpResponses, HttpHeaders, etc.
 author: Tobe O <thosakwe@gmail.com>
 homepage: https://github.com/thosakwe/mock_request
 dependencies:
+  dart2_constant: ^1.0.0
   charcode: ">=1.0.0 <2.0.0"
 dev_dependencies:
   angel_framework: ">=1.0.0-dev <2.0.0"
