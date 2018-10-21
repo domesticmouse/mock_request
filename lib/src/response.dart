@@ -17,7 +17,7 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
 
   @override
   HttpConnectionInfo connectionInfo =
-      new MockHttpConnectionInfo(remoteAddress: InternetAddress.ANY_IP_V4);
+      new MockHttpConnectionInfo(remoteAddress: InternetAddress.anyIPv4);
 
   /// [copyBuffer] corresponds to `copy` on the [BytesBuilder] constructor.
   MockHttpResponse(
@@ -112,8 +112,8 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
 
   @override
   Future redirect(Uri location,
-      {int status: HttpStatus.MOVED_TEMPORARILY}) async {
-    statusCode = status ?? HttpStatus.MOVED_TEMPORARILY;
+      {int status: HttpStatus.movedTemporarily}) async {
+    statusCode = status ?? HttpStatus.movedTemporarily;
   }
 
   @override

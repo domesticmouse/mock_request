@@ -6,15 +6,15 @@ import 'package:test/test.dart';
 
 main() {
   var app = new Angel()
-    ..get('/foo', 'Hello, world!')
-    ..post('/body', (RequestContext req, res) async => req.body.length)
-    ..get('/session', (RequestContext req, res) async {
+    ..get('/foo', (req, res) => 'Hello, world!')
+    ..post('/body', (req, res) => req.parseBody().then((b) => b.length))
+    ..get('/session', (req, res) async {
       req.session['foo'] = 'bar';
     })
     ..get('/conn', (RequestContext req, res) async {
-      res.serialize(req.ip == InternetAddress.LOOPBACK_IP_V4.address);
+      res.serialize(req.ip == InternetAddress.loopbackIPv4.address);
     });
-    var http = new AngelHttp(app);
+  var http = new AngelHttp(app);
 
   test('receive a response', () async {
     var rq = new MockHttpRequest('GET', Uri.parse('/foo'));
@@ -29,7 +29,7 @@ main() {
   test('send a body', () async {
     var rq = new MockHttpRequest('POST', Uri.parse('/body'));
     rq
-      ..headers.set(HttpHeaders.CONTENT_TYPE, ContentType.JSON.mimeType)
+      ..headers.set(HttpHeaders.contentTypeHeader, ContentType.json.mimeType)
       ..write(json.encode({'foo': 'bar', 'bar': 'baz', 'baz': 'quux'}));
     await rq.close();
     await http.handleRequest(rq);

@@ -21,7 +21,7 @@ class MockHttpRequest extends Stream<List<int>>
 
   @override
   HttpConnectionInfo connectionInfo =
-      new MockHttpConnectionInfo(remoteAddress: InternetAddress.LOOPBACK_IP_V4);
+      new MockHttpConnectionInfo(remoteAddress: InternetAddress.loopbackIPv4);
 
   @override
   MockHttpResponse response = new MockHttpResponse();
@@ -180,7 +180,7 @@ class MockHttpRequest extends Stream<List<int>>
       _stream.stream.every(test);
 
   @override
-  Stream<S> expand<S>(Iterable convert(List<int> value)) =>
+  Stream<S> expand<S>(Iterable<S> convert(List<int> value)) =>
       _stream.stream.expand(convert);
 
   @override
@@ -192,8 +192,7 @@ class MockHttpRequest extends Stream<List<int>>
       _stream.stream.firstWhere(test, orElse: orElse);
 
   @override
-  Future<S> fold<S>(S initialValue,
-          S combine(S previous, List<int> element)) =>
+  Future<S> fold<S>(S initialValue, S combine(S previous, List<int> element)) =>
       _stream.stream.fold(initialValue, combine);
 
   @override
@@ -218,7 +217,8 @@ class MockHttpRequest extends Stream<List<int>>
   Future<List<int>> get last => _stream.stream.last;
 
   @override
-  Future<List<int>> lastWhere(bool test(List<int> element), {List<int> orElse()}) =>
+  Future<List<int>> lastWhere(bool test(List<int> element),
+          {List<int> orElse()}) =>
       _stream.stream.lastWhere(test, orElse: orElse);
 
   @override
@@ -233,8 +233,7 @@ class MockHttpRequest extends Stream<List<int>>
           cancelOnError: cancelOnError == true);
 
   @override
-  Stream<S> map<S>(S convert(List<int> event)) =>
-      _stream.stream.map(convert);
+  Stream<S> map<S>(S convert(List<int> event)) => _stream.stream.map(convert);
 
   @override
   Future pipe(StreamConsumer<List<int>> streamConsumer) =>
@@ -249,7 +248,8 @@ class MockHttpRequest extends Stream<List<int>>
   Future<List<int>> get single => _stream.stream.single;
 
   @override
-  Future<List<int>> singleWhere(bool test(List<int> element), {List<int> orElse()}) =>
+  Future<List<int>> singleWhere(bool test(List<int> element),
+          {List<int> orElse()}) =>
       _stream.stream.singleWhere(test, orElse: orElse);
 
   @override
