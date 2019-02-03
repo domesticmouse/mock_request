@@ -1,23 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:angel_framework/angel_framework.dart';
+import 'package:angel_framework/http.dart';
 import 'package:mock_request/mock_request.dart';
 import 'package:test/test.dart';
 
 main() {
+  var uri = Uri.parse('http://localhost:3000');
   var app = new Angel()
     ..get('/foo', (req, res) => 'Hello, world!')
-    ..post('/body', (req, res) => req.parseBody().then((b) => b.length))
+    ..post('/body',
+        (req, res) => req.parseBody().then((_) => req.bodyAsMap.length))
     ..get('/session', (req, res) async {
       req.session['foo'] = 'bar';
     })
     ..get('/conn', (RequestContext req, res) async {
       res.serialize(req.ip == InternetAddress.loopbackIPv4.address);
     });
+
   var http = new AngelHttp(app);
 
   test('receive a response', () async {
-    var rq = new MockHttpRequest('GET', Uri.parse('/foo'));
+    var rq = new MockHttpRequest('GET', uri.resolve('/foo'));
     await rq.close();
     await http.handleRequest(rq);
     var rs = rq.response;
@@ -27,7 +31,7 @@ main() {
   });
 
   test('send a body', () async {
-    var rq = new MockHttpRequest('POST', Uri.parse('/body'));
+    var rq = new MockHttpRequest('POST', uri.resolve('/body'));
     rq
       ..headers.set(HttpHeaders.contentTypeHeader, ContentType.json.mimeType)
       ..write(json.encode({'foo': 'bar', 'bar': 'baz', 'baz': 'quux'}));
@@ -39,7 +43,7 @@ main() {
   });
 
   test('session', () async {
-    var rq = new MockHttpRequest('GET', Uri.parse('/session'));
+    var rq = new MockHttpRequest('GET', uri.resolve('/session'));
     await rq.close();
     await http.handleRequest(rq);
     expect(rq.session.keys, contains('foo'));
@@ -47,7 +51,7 @@ main() {
   });
 
   test('connection info', () async {
-    var rq = new MockHttpRequest('GET', Uri.parse('/conn'));
+    var rq = new MockHttpRequest('GET', uri.resolve('/conn'));
     await rq.close();
     await http.handleRequest(rq);
     var rs = rq.response;
@@ -55,8 +59,8 @@ main() {
   });
 
   test('requested uri', () {
-    var rq = new MockHttpRequest('GET', Uri.parse('/mock'));
-    expect(rq.uri.toString(), '/mock');
+    var rq = new MockHttpRequest('GET', uri.resolve('/mock'));
+    expect(rq.uri.path, '/mock');
     expect(rq.requestedUri.toString(), 'http://example.com/mock');
   });
 }

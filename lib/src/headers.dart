@@ -122,4 +122,15 @@ class MockHttpHeaders extends HttpHeaders {
 
   @override
   String value(String name) => _data[name.toLowerCase()]?.join(',');
+
+  @override
+  String toString() {
+    var b = StringBuffer();
+    _data.forEach((k, v) {
+      b.write('$k: ');
+      b.write(v.join(','));
+      b.writeln();
+    });
+    return b.toString();
+  }
 }

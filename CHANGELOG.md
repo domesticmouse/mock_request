@@ -1,3 +1,6 @@
+# 1.0.5
+* Add `toString` to `MockHttpHeaders`.
+
 # 1.0.4
 * Fix for `ifModifiedSince`
 
