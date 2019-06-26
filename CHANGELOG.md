@@ -1,3 +1,7 @@
+# 1.0.6
+* Prepare for upcoming Dart SDK change whereby `HttpRequest` implements
+  `Stream<Uint8List>` rather than `Stream<List<int>>`.
+
 # 1.0.5
 * Add `toString` to `MockHttpHeaders`.
 
