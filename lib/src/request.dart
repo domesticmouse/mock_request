@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:charcode/ascii.dart';
 import 'connection_info.dart';
 import 'lockable_headers.dart';
 import 'response.dart';
 import 'session.dart';
 
-class MockHttpRequest extends Stream<List<int>>
-    implements HttpRequest, StreamSink<List<int>>, StringSink {
+class MockHttpRequest implements HttpRequest, StreamSink<List<int>>, StringSink {
   int _contentLength = 0;
   BytesBuilder _buf;
   final Completer _done = new Completer();
   final LockableMockHttpHeaders _headers = new LockableMockHttpHeaders();
   Uri _requestedUri;
   MockHttpSession _session;
-  final StreamController<List<int>> _stream = new StreamController<List<int>>();
+  final StreamController<Uint8List> _stream = new StreamController<Uint8List>();
 
   @override
   final List<Cookie> cookies = [];
@@ -47,8 +47,7 @@ class MockHttpRequest extends Stream<List<int>>
       this.persistentConnection}) {
     _buf = new BytesBuilder(copy: copyBuffer != false);
     _session = new MockHttpSession(id: sessionId ?? 'mock-http-session');
-    this.protocolVersion =
-        protocolVersion?.isNotEmpty == true ? protocolVersion : '1.1';
+    this.protocolVersion = protocolVersion?.isNotEmpty == true ? protocolVersion : '1.1';
   }
 
   @override
@@ -63,10 +62,11 @@ class MockHttpRequest extends Stream<List<int>>
       return _requestedUri;
     else
       return _requestedUri = new Uri(
-          scheme: 'http',
-          host: 'example.com',
-          path: uri.path,
-          query: uri.query);
+        scheme: 'http',
+        host: 'example.com',
+        path: uri.path,
+        query: uri.query,
+      );
   }
 
   void set requestedUri(Uri value) {
@@ -120,7 +120,7 @@ class MockHttpRequest extends Stream<List<int>>
   // @override
   Future flush() async {
     _contentLength += _buf.length;
-    _stream.add(_buf.takeBytes());
+    _stream.add(_buf.takeBytes() as Uint8List);
   }
 
   @override
@@ -145,62 +145,62 @@ class MockHttpRequest extends Stream<List<int>>
   }
 
   @override
-  Future<bool> any(bool test(List<int> element)) => _stream.stream.any(test);
+  Future<bool> any(bool test(Uint8List element)) {
+    return _stream.stream.any((List<int> e) {
+      return test(Uint8List.fromList(e));
+    });
+  }
 
   @override
-  Stream<List<int>> asBroadcastStream(
-          {void onListen(StreamSubscription<List<int>> subscription),
-          void onCancel(StreamSubscription<List<int>> subscription)}) =>
-      _stream.stream.asBroadcastStream(onListen: onListen, onCancel: onCancel);
+  Stream<Uint8List> asBroadcastStream({
+    void onListen(StreamSubscription<Uint8List> subscription),
+    void onCancel(StreamSubscription<Uint8List> subscription),
+  }) {
+    return _stream.stream.asBroadcastStream(onListen: onListen, onCancel: onCancel);
+  }
 
   @override
-  Stream<E> asyncExpand<E>(Stream<E> convert(List<int> event)) =>
+  Stream<E> asyncExpand<E>(Stream<E> convert(Uint8List event)) =>
       _stream.stream.asyncExpand(convert);
 
   @override
-  Stream<E> asyncMap<E>(FutureOr<E> convert(List<int> event)) =>
-      _stream.stream.asyncMap(convert);
+  Stream<E> asyncMap<E>(FutureOr<E> convert(Uint8List event)) => _stream.stream.asyncMap(convert);
 
   @override
   Future<bool> contains(Object needle) => _stream.stream.contains(needle);
 
   @override
-  Stream<List<int>> distinct(
-          [bool equals(List<int> previous, List<int> next)]) =>
+  Stream<Uint8List> distinct([bool equals(Uint8List previous, Uint8List next)]) =>
       _stream.stream.distinct(equals);
 
   @override
   Future<E> drain<E>([E futureValue]) => _stream.stream.drain(futureValue);
 
   @override
-  Future<List<int>> elementAt(int index) => _stream.stream.elementAt(index);
+  Future<Uint8List> elementAt(int index) => _stream.stream.elementAt(index);
 
   @override
-  Future<bool> every(bool test(List<int> element)) =>
-      _stream.stream.every(test);
+  Future<bool> every(bool test(Uint8List element)) => _stream.stream.every(test);
 
   @override
-  Stream<S> expand<S>(Iterable<S> convert(List<int> value)) =>
-      _stream.stream.expand(convert);
+  Stream<S> expand<S>(Iterable<S> convert(Uint8List value)) => _stream.stream.expand(convert);
 
   @override
-  Future<List<int>> get first => _stream.stream.first;
+  Future<Uint8List> get first => _stream.stream.first;
 
   @override
-  Future<List<int>> firstWhere(bool test(List<int> element),
-          {List<int> orElse()}) =>
-      _stream.stream.firstWhere(test, orElse: orElse);
+  Future<Uint8List> firstWhere(bool test(Uint8List element), {List<int> orElse()}) =>
+      _stream.stream.firstWhere(test, orElse: () => Uint8List.fromList(orElse()));
 
   @override
-  Future<S> fold<S>(S initialValue, S combine(S previous, List<int> element)) =>
+  Future<S> fold<S>(S initialValue, S combine(S previous, Uint8List element)) =>
       _stream.stream.fold(initialValue, combine);
 
   @override
-  Future forEach(void action(List<int> element)) =>
-      _stream.stream.forEach(action);
+  Future forEach(void action(Uint8List element)) => _stream.stream.forEach(action);
 
   @override
-  Stream<List<int>> handleError(Function onError, {bool test(error)}) =>
+  Stream<Uint8List> handleError(Function onError, {bool test(error)}) =>
       _stream.stream.handleError(onError, test: test);
 
   @override
@@ -210,78 +210,83 @@ class MockHttpRequest extends Stream<List<int>>
   Future<bool> get isEmpty => _stream.stream.isEmpty;
 
   @override
-  Future<String> join([String separator = ""]) =>
-      _stream.stream.join(separator ?? "");
+  Future<String> join([String separator = ""]) => _stream.stream.join(separator ?? "");
 
   @override
-  Future<List<int>> get last => _stream.stream.last;
+  Future<Uint8List> get last => _stream.stream.last;
 
   @override
-  Future<List<int>> lastWhere(bool test(List<int> element),
-          {List<int> orElse()}) =>
-      _stream.stream.lastWhere(test, orElse: orElse);
+  Future<Uint8List> lastWhere(bool test(Uint8List element), {List<int> orElse()}) =>
+      _stream.stream.lastWhere(test, orElse: () => Uint8List.fromList(orElse()));
 
   @override
   Future<int> get length => _stream.stream.length;
 
   @override
-  StreamSubscription<List<int>> listen(void onData(List<int> event),
-          {Function onError, void onDone(), bool cancelOnError}) =>
-      _stream.stream.listen(onData,
-          onError: onError,
-          onDone: onDone,
-          cancelOnError: cancelOnError == true);
+  StreamSubscription<Uint8List> listen(
+    void onData(Uint8List event), {
+    Function onError,
+    void onDone(),
+    bool cancelOnError,
+  }) {
+    return _stream.stream.listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError == true,
+    );
+  }
 
   @override
-  Stream<S> map<S>(S convert(List<int> event)) => _stream.stream.map(convert);
+  Stream<S> map<S>(S convert(Uint8List event)) => _stream.stream.map(convert);
 
   @override
   Future pipe(StreamConsumer<List<int>> streamConsumer) =>
-      _stream.stream.pipe(streamConsumer);
+      _stream.stream.cast<List<int>>().pipe(streamConsumer);
 
   @override
-  Future<List<int>> reduce(
-          List<int> combine(List<int> previous, List<int> element)) =>
-      _stream.stream.reduce(combine);
+  Future<Uint8List> reduce(List<int> combine(Uint8List previous, Uint8List element)) {
+    return _stream.stream.reduce((Uint8List previous, Uint8List element) {
+      return Uint8List.fromList(combine(previous, element));
+    });
+  }
 
   @override
-  Future<List<int>> get single => _stream.stream.single;
+  Future<Uint8List> get single => _stream.stream.single;
 
   @override
-  Future<List<int>> singleWhere(bool test(List<int> element),
-          {List<int> orElse()}) =>
-      _stream.stream.singleWhere(test, orElse: orElse);
+  Future<Uint8List> singleWhere(bool test(Uint8List element), {List<int> orElse()}) =>
+      _stream.stream.singleWhere(test, orElse: () => Uint8List.fromList(orElse()));
 
   @override
-  Stream<List<int>> skip(int count) => _stream.stream.skip(count);
+  Stream<Uint8List> skip(int count) => _stream.stream.skip(count);
 
   @override
-  Stream<List<int>> skipWhile(bool test(List<int> element)) =>
-      _stream.stream.skipWhile(test);
+  Stream<Uint8List> skipWhile(bool test(Uint8List element)) => _stream.stream.skipWhile(test);
 
   @override
-  Stream<List<int>> take(int count) => _stream.stream.take(count);
+  Stream<Uint8List> take(int count) => _stream.stream.take(count);
 
   @override
-  Stream<List<int>> takeWhile(bool test(List<int> element)) =>
-      _stream.stream.takeWhile(test);
+  Stream<Uint8List> takeWhile(bool test(Uint8List element)) => _stream.stream.takeWhile(test);
 
   @override
-  Stream<List<int>> timeout(Duration timeLimit,
-          {void onTimeout(EventSink<List<int>> sink)}) =>
+  Stream<Uint8List> timeout(Duration timeLimit, {void onTimeout(EventSink<Uint8List> sink)}) =>
       _stream.stream.timeout(timeLimit, onTimeout: onTimeout);
 
   @override
-  Future<List<List<int>>> toList() => _stream.stream.toList();
+  Future<List<Uint8List>> toList() => _stream.stream.toList();
 
   @override
-  Future<Set<List<int>>> toSet() => _stream.stream.toSet();
+  Future<Set<Uint8List>> toSet() => _stream.stream.toSet();
 
   @override
   Stream<S> transform<S>(StreamTransformer<List<int>, S> streamTransformer) =>
-      _stream.stream.transform(streamTransformer);
+      _stream.stream.cast<List<int>>().transform(streamTransformer);
 
   @override
-  Stream<List<int>> where(bool test(List<int> event)) =>
-      _stream.stream.where(test);
+  Stream<Uint8List> where(bool test(Uint8List event)) => _stream.stream.where(test);
+
+  @override
+  Stream<R> cast<R>() => Stream.castFrom<List<int>, R>(this);
 }
