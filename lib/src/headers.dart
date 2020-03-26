@@ -5,7 +5,7 @@ class MockHttpHeaders extends HttpHeaders {
   final List<String> _noFolding = [];
   Uri _host;
 
-  List<String> get doNotFold => new List<String>.unmodifiable(_noFolding);
+  List<String> get doNotFold => List<String>.unmodifiable(_noFolding);
 
   ContentType get contentType {
     if (_data.containsKey(HttpHeaders.contentTypeHeader))

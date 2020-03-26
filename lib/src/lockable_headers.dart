@@ -4,8 +4,8 @@ import 'headers.dart';
 class LockableMockHttpHeaders extends MockHttpHeaders {
   bool _locked = false;
 
-  StateError _stateError() => new StateError(
-      'Cannot modify headers after they have been write-locked.');
+  StateError _stateError() =>
+      StateError('Cannot modify headers after they have been write-locked.');
 
   void lock() {
     _locked = true;

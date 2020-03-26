@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 main() {
   var uri = Uri.parse('http://localhost:3000');
-  var app = new Angel()
+  var app = Angel()
     ..get('/foo', (req, res) => 'Hello, world!')
     ..post('/body',
         (req, res) => req.parseBody().then((_) => req.bodyAsMap.length))
@@ -18,10 +18,10 @@ main() {
       res.serialize(req.ip == InternetAddress.loopbackIPv4.address);
     });
 
-  var http = new AngelHttp(app);
+  var http = AngelHttp(app);
 
   test('receive a response', () async {
-    var rq = new MockHttpRequest('GET', uri.resolve('/foo'));
+    var rq = MockHttpRequest('GET', uri.resolve('/foo'));
     await rq.close();
     await http.handleRequest(rq);
     var rs = rq.response;
@@ -31,7 +31,7 @@ main() {
   });
 
   test('send a body', () async {
-    var rq = new MockHttpRequest('POST', uri.resolve('/body'));
+    var rq = MockHttpRequest('POST', uri.resolve('/body'));
     rq
       ..headers.set(HttpHeaders.contentTypeHeader, ContentType.json.mimeType)
       ..write(json.encode({'foo': 'bar', 'bar': 'baz', 'baz': 'quux'}));
@@ -43,7 +43,7 @@ main() {
   });
 
   test('session', () async {
-    var rq = new MockHttpRequest('GET', uri.resolve('/session'));
+    var rq = MockHttpRequest('GET', uri.resolve('/session'));
     await rq.close();
     await http.handleRequest(rq);
     expect(rq.session.keys, contains('foo'));
@@ -51,7 +51,7 @@ main() {
   });
 
   test('connection info', () async {
-    var rq = new MockHttpRequest('GET', uri.resolve('/conn'));
+    var rq = MockHttpRequest('GET', uri.resolve('/conn'));
     await rq.close();
     await http.handleRequest(rq);
     var rs = rq.response;
@@ -59,7 +59,7 @@ main() {
   });
 
   test('requested uri', () {
-    var rq = new MockHttpRequest('GET', uri.resolve('/mock'));
+    var rq = MockHttpRequest('GET', uri.resolve('/mock'));
     expect(rq.uri.path, '/mock');
     expect(rq.requestedUri.toString(), 'http://example.com/mock');
   });
