@@ -12,11 +12,11 @@ class LockableMockHttpHeaders extends MockHttpHeaders {
   }
 
   @override
-  void add(String name, Object value) {
+  void add(String name, Object value, {bool preserveHeaderCase = false}) {
     if (_locked)
       throw _stateError();
     else
-      super.add(name, value);
+      super.add(name, value, preserveHeaderCase: preserveHeaderCase);
   }
 
   @override
@@ -52,10 +52,10 @@ class LockableMockHttpHeaders extends MockHttpHeaders {
   }
 
   @override
-  void set(String name, Object value) {
+  void set(String name, Object value, {bool preserveHeaderCase = false}) {
     if (_locked)
       throw _stateError();
     else
-      super.set(name, value);
+      super.set(name, value, preserveHeaderCase: preserveHeaderCase);
   }
 }
