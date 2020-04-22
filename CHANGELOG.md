@@ -1,3 +1,7 @@
+# 1.0.7
+* Prepare for upcoming Dart SDK change where `HttpHeaders` methods
+  `add` and `set` take an additional optional parameter `preserveHeaderCase`.
+
 # 1.0.6
 * Prepare for upcoming Dart SDK change whereby `HttpRequest` implements
   `Stream<Uint8List>` rather than `Stream<List<int>>`.
