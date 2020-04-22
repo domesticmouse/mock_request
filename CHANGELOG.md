@@ -1,3 +1,6 @@
+# 1.0.7
+* Backwards compatible fix for Dart 2.8 changes to HttpHeaders (thanks @domesticmouse!)
+
 # 1.0.6
 * Prepare for upcoming Dart SDK change whereby `HttpRequest` implements
   `Stream<Uint8List>` rather than `Stream<List<int>>`.
