@@ -7,42 +7,52 @@ class MockHttpHeaders extends HttpHeaders {
 
   List<String> get doNotFold => List<String>.unmodifiable(_noFolding);
 
+  @override
   ContentType get contentType {
-    if (_data.containsKey(HttpHeaders.contentTypeHeader))
+    if (_data.containsKey(HttpHeaders.contentTypeHeader)) {
       return ContentType.parse(_data[HttpHeaders.contentTypeHeader].join(','));
-    else
+    } else {
       return null;
+    }
   }
 
-  void set contentType(ContentType value) =>
+  @override
+  set contentType(ContentType value) =>
       set(HttpHeaders.contentTypeHeader, value.value);
 
+  @override
   DateTime get date => _data.containsKey(HttpHeaders.dateHeader)
       ? HttpDate.parse(_data[HttpHeaders.dateHeader].join(','))
       : null;
 
-  void set date(DateTime value) =>
+  @override
+  set date(DateTime value) =>
       set(HttpHeaders.dateHeader, HttpDate.format(value));
 
+  @override
   DateTime get expires => _data.containsKey(HttpHeaders.expiresHeader)
       ? HttpDate.parse(_data[HttpHeaders.expiresHeader].join(','))
       : null;
 
-  void set expires(DateTime value) =>
+  @override
+  set expires(DateTime value) =>
       set(HttpHeaders.expiresHeader, HttpDate.format(value));
 
+  @override
   DateTime get ifModifiedSince =>
       _data.containsKey(HttpHeaders.ifModifiedSinceHeader)
           ? HttpDate.parse(_data[HttpHeaders.ifModifiedSinceHeader].join(','))
           : null;
 
-  void set ifModifiedSince(DateTime value) =>
+  @override
+  set ifModifiedSince(DateTime value) =>
       set(HttpHeaders.ifModifiedSinceHeader, HttpDate.format(value));
 
+  @override
   String get host {
-    if (_host != null)
+    if (_host != null) {
       return _host.host;
-    else if (_data.containsKey(HttpHeaders.hostHeader)) {
+    } else if (_data.containsKey(HttpHeaders.hostHeader)) {
       _host = Uri.parse(_data[HttpHeaders.hostHeader].join(','));
       return _host.host;
     } else {
@@ -50,8 +60,9 @@ class MockHttpHeaders extends HttpHeaders {
     }
   }
 
+  @override
   int get port {
-    this.host; // Parse it
+    host; // Parse it
     return _host?.port;
   }
 
@@ -59,19 +70,21 @@ class MockHttpHeaders extends HttpHeaders {
   List<String> operator [](String name) => _data[name.toLowerCase()];
 
   @override
-  void add(String name, Object value, {bool preserveHeaderCase = false}) {
-    var lower = preserveHeaderCase ? name : name.toLowerCase();
+  void add(String name, Object value) {
+    var lower = name.toLowerCase();
 
     if (_data.containsKey(lower)) {
-      if (value is Iterable)
+      if (value is Iterable) {
         _data[lower].addAll(value.map((x) => x.toString()).toList());
-      else
+      } else {
         _data[lower].add(value.toString());
+      }
     } else {
-      if (value is Iterable)
+      if (value is Iterable) {
         _data[lower] = value.map((x) => x.toString()).toList();
-      else
+      } else {
         _data[lower] = [value.toString()];
+      }
     }
   }
 
@@ -81,7 +94,7 @@ class MockHttpHeaders extends HttpHeaders {
   }
 
   @override
-  void forEach(void f(String name, List<String> values)) {
+  void forEach(void Function(String name, List<String> values) f) {
     _data.forEach(f);
   }
 
@@ -99,8 +112,9 @@ class MockHttpHeaders extends HttpHeaders {
         for (var x in value) {
           _data[lower].remove(x.toString());
         }
-      } else
+      } else {
         _data[lower].remove(value.toString());
+      }
     }
   }
 
@@ -110,14 +124,15 @@ class MockHttpHeaders extends HttpHeaders {
   }
 
   @override
-  void set(String name, Object value, {bool preserveHeaderCase = false}) {
-    var lower = preserveHeaderCase ? name : name.toLowerCase();
+  void set(String name, Object value) {
+    var lower = name.toLowerCase();
     _data.remove(lower);
 
-    if (value is Iterable)
+    if (value is Iterable) {
       _data[lower] = value.map((x) => x.toString()).toList();
-    else
+    } else {
       _data[lower] = [value.toString()];
+    }
   }
 
   @override

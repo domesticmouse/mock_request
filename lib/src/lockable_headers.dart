@@ -13,49 +13,55 @@ class LockableMockHttpHeaders extends MockHttpHeaders {
 
   @override
   void add(String name, Object value, {bool preserveHeaderCase = false}) {
-    if (_locked)
+    if (_locked) {
       throw _stateError();
-    else
+    } else {
       super.add(name, value, preserveHeaderCase: preserveHeaderCase);
+    }
   }
 
   @override
   void clear() {
-    if (_locked)
+    if (_locked) {
       throw _stateError();
-    else
+    } else {
       super.clear();
+    }
   }
 
   @override
   void noFolding(String name) {
-    if (_locked)
+    if (_locked) {
       throw _stateError();
-    else
+    } else {
       super.noFolding(name);
+    }
   }
 
   @override
   void remove(String name, Object value) {
-    if (_locked)
+    if (_locked) {
       throw _stateError();
-    else
+    } else {
       super.remove(name, value);
+    }
   }
 
   @override
   void removeAll(String name) {
-    if (_locked)
+    if (_locked) {
       throw _stateError();
-    else
+    } else {
       super.removeAll(name);
+    }
   }
 
   @override
   void set(String name, Object value, {bool preserveHeaderCase = false}) {
-    if (_locked)
+    if (_locked) {
       throw _stateError();
-    else
+    } else {
       super.set(name, value, preserveHeaderCase: preserveHeaderCase);
+    }
   }
 }

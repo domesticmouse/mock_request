@@ -37,7 +37,8 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   @override
   bool get bufferOutput => _bufferOutput;
 
-  void set bufferOutput(bool value) {}
+  @override
+  set bufferOutput(bool value) {}
 
   @override
   int contentLength;
@@ -65,23 +66,25 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
 
   @override
   void add(List<int> data) {
-    if (_done.isCompleted)
+    if (_done.isCompleted) {
       throw StateError('Cannot add to closed MockHttpResponse.');
-    else {
+    } else {
       _headers.lock();
-      if (_bufferOutput == true)
+      if (_bufferOutput == true) {
         _buf.add(data);
-      else
+      } else {
         _stream.add(data);
+      }
     }
   }
 
   @override
   void addError(error, [StackTrace stackTrace]) {
-    if (_done.isCompleted)
+    if (_done.isCompleted) {
       throw StateError('Cannot add to closed MockHttpResponse.');
-    else
+    } else {
       _stream.addError(error, stackTrace);
+    }
   }
 
   @override
@@ -95,7 +98,7 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   Future close() async {
     _headers.lock();
     await flush();
-    _stream.close();
+    scheduleMicrotask(_stream.close);
     _done.complete();
     //return await _done.future;
   }
@@ -122,8 +125,8 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   }
 
   @override
-  void writeAll(Iterable objects, [String separator = ""]) {
-    write(objects.join(separator ?? ""));
+  void writeAll(Iterable objects, [String separator = '']) {
+    write(objects.join(separator ?? ''));
   }
 
   @override
@@ -132,14 +135,14 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   }
 
   @override
-  void writeln([Object obj = ""]) {
-    write(obj ?? "");
+  void writeln([Object obj = '']) {
+    write(obj ?? '');
     add([$cr, $lf]);
   }
 
   @override
-  StreamSubscription<List<int>> listen(void onData(List<int> event),
-          {Function onError, void onDone(), bool cancelOnError}) =>
+  StreamSubscription<List<int>> listen(void Function(List<int> event) onData,
+          {Function onError, void Function() onDone, bool cancelOnError}) =>
       _stream.stream.listen(onData,
           onError: onError,
           onDone: onDone,

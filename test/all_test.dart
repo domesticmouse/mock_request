@@ -5,7 +5,7 @@ import 'package:angel_framework/http.dart';
 import 'package:mock_request/mock_request.dart';
 import 'package:test/test.dart';
 
-main() {
+void main() {
   var uri = Uri.parse('http://localhost:3000');
   var app = Angel()
     ..get('/foo', (req, res) => 'Hello, world!')
@@ -14,8 +14,8 @@ main() {
     ..get('/session', (req, res) async {
       req.session['foo'] = 'bar';
     })
-    ..get('/conn', (RequestContext req, res) async {
-      res.serialize(req.ip == InternetAddress.loopbackIPv4.address);
+    ..get('/conn', (RequestContext req, res) {
+      return res.serialize(req.ip == InternetAddress.loopbackIPv4.address);
     });
 
   var http = AngelHttp(app);

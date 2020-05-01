@@ -13,7 +13,7 @@ class MockHttpSession extends MapBase implements HttpSession {
   int get length => _data.length;
 
   @override
-  operator [](Object key) => _data[key];
+  dynamic operator [](Object key) => _data[key];
 
   @override
   void operator []=(key, value) {
@@ -40,7 +40,7 @@ class MockHttpSession extends MapBase implements HttpSession {
   }
 
   @override
-  void forEach(void f(key, value)) {
+  void forEach(void Function(dynamic, dynamic) f) {
     _data.forEach(f);
   }
 
@@ -57,16 +57,17 @@ class MockHttpSession extends MapBase implements HttpSession {
   Iterable get keys => _data.keys;
 
   @override
-  putIfAbsent(key, ifAbsent()) => _data.putIfAbsent(key, ifAbsent);
+  dynamic putIfAbsent(key, dynamic Function() ifAbsent) =>
+      _data.putIfAbsent(key, ifAbsent);
 
   @override
-  remove(Object key) => _data.remove(key);
+  dynamic remove(Object key) => _data.remove(key);
 
   @override
   Iterable get values => _data.values;
 
   @override
-  set onTimeout(void callback()) {
+  set onTimeout(void Function() callback) {
     print(
         'An onTimeout callback was set on a MockHttpSession, which will do nothing.');
   }
