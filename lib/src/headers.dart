@@ -70,8 +70,8 @@ class MockHttpHeaders extends HttpHeaders {
   List<String> operator [](String name) => _data[name.toLowerCase()];
 
   @override
-  void add(String name, Object value) {
-    var lower = name.toLowerCase();
+  void add(String name, Object value, {bool preserveHeaderCase = false}) {
+    var lower = preserveHeaderCase ? name : name.toLowerCase();
 
     if (_data.containsKey(lower)) {
       if (value is Iterable) {
@@ -124,8 +124,8 @@ class MockHttpHeaders extends HttpHeaders {
   }
 
   @override
-  void set(String name, Object value) {
-    var lower = name.toLowerCase();
+  void set(String name, Object value, {bool preserveHeaderCase = false}) {
+    var lower = preserveHeaderCase ? name : name.toLowerCase();
     _data.remove(lower);
 
     if (value is Iterable) {
