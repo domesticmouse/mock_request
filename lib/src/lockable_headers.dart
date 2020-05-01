@@ -4,19 +4,19 @@ import 'headers.dart';
 class LockableMockHttpHeaders extends MockHttpHeaders {
   bool _locked = false;
 
-  StateError _stateError() => new StateError(
-      'Cannot modify headers after they have been write-locked.');
+  StateError _stateError() =>
+      StateError('Cannot modify headers after they have been write-locked.');
 
   void lock() {
     _locked = true;
   }
 
   @override
-  void add(String name, Object value) {
+  void add(String name, Object value, {bool preserveHeaderCase = false}) {
     if (_locked)
       throw _stateError();
     else
-      super.add(name, value);
+      super.add(name, value, preserveHeaderCase: preserveHeaderCase);
   }
 
   @override
@@ -52,10 +52,10 @@ class LockableMockHttpHeaders extends MockHttpHeaders {
   }
 
   @override
-  void set(String name, Object value) {
+  void set(String name, Object value, {bool preserveHeaderCase = false}) {
     if (_locked)
       throw _stateError();
     else
-      super.set(name, value);
+      super.set(name, value, preserveHeaderCase: preserveHeaderCase);
   }
 }

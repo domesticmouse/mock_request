@@ -8,7 +8,13 @@ environment:
 dependencies:
   charcode: ">=1.0.0 <2.0.0"
 dev_dependencies:
+<<<<<<< HEAD
   angel_framework: ^2.0.0-alpha
   http: ^0.11.0
   pedantic: ^1.0.0
   test: ^1.0.0
+=======
+  angel_framework: ^2.1.0
+  http: ^0.12.0
+  test: ^1.14.0
+>>>>>>> 5a6336d6a7ba9309b6fa31a6185b619f329dc5d7

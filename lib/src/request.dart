@@ -11,21 +11,21 @@ class MockHttpRequest
     implements HttpRequest, StreamSink<List<int>>, StringSink {
   int _contentLength = 0;
   BytesBuilder _buf;
-  final Completer _done = new Completer();
-  final LockableMockHttpHeaders _headers = new LockableMockHttpHeaders();
+  final Completer _done = Completer();
+  final LockableMockHttpHeaders _headers = LockableMockHttpHeaders();
   Uri _requestedUri;
   MockHttpSession _session;
-  final StreamController<Uint8List> _stream = new StreamController<Uint8List>();
+  final StreamController<Uint8List> _stream = StreamController<Uint8List>();
 
   @override
   final List<Cookie> cookies = [];
 
   @override
   HttpConnectionInfo connectionInfo =
-      new MockHttpConnectionInfo(remoteAddress: InternetAddress.loopbackIPv4);
+      MockHttpConnectionInfo(remoteAddress: InternetAddress.loopbackIPv4);
 
   @override
-  MockHttpResponse response = new MockHttpResponse();
+  MockHttpResponse response = MockHttpResponse();
 
   @override
   HttpSession get session => _session;
@@ -41,13 +41,18 @@ class MockHttpRequest
 
   /// [copyBuffer] corresponds to `copy` on the [BytesBuilder] constructor.
   MockHttpRequest(this.method, this.uri,
-      {bool copyBuffer: true,
+      {bool copyBuffer = true,
       String protocolVersion,
       String sessionId,
       this.certificate,
       this.persistentConnection}) {
+<<<<<<< HEAD
     _buf = new BytesBuilder(copy: copyBuffer != false);
     _session = new MockHttpSession(id: sessionId ?? 'mock-http-session');
+=======
+    _buf = BytesBuilder(copy: copyBuffer != false);
+    _session = MockHttpSession(id: sessionId ?? 'mock-http-session');
+>>>>>>> 5a6336d6a7ba9309b6fa31a6185b619f329dc5d7
     this.protocolVersion =
         protocolVersion?.isNotEmpty == true ? protocolVersion : '1.1';
   }
@@ -63,7 +68,7 @@ class MockHttpRequest
     if (_requestedUri != null)
       return _requestedUri;
     else
-      return _requestedUri = new Uri(
+      return _requestedUri = Uri(
         scheme: 'http',
         host: 'example.com',
         path: uri.path,
@@ -84,7 +89,7 @@ class MockHttpRequest
   @override
   void add(List<int> data) {
     if (_done.isCompleted)
-      throw new StateError('Cannot add to closed MockHttpRequest.');
+      throw StateError('Cannot add to closed MockHttpRequest.');
     else {
       _headers.lock();
       _contentLength += data.length;
@@ -95,14 +100,14 @@ class MockHttpRequest
   @override
   void addError(error, [StackTrace stackTrace]) {
     if (_done.isCompleted)
-      throw new StateError('Cannot add to closed MockHttpRequest.');
+      throw StateError('Cannot add to closed MockHttpRequest.');
     else
       _stream.addError(error, stackTrace);
   }
 
   @override
   Future addStream(Stream<List<int>> stream) {
-    var c = new Completer();
+    var c = Completer();
     stream.listen(add, onError: addError, onDone: c.complete);
     return c.future;
   }

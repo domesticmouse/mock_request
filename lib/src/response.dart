@@ -6,22 +6,22 @@ import 'connection_info.dart';
 import 'lockable_headers.dart';
 
 class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
-  BytesBuilder _buf = new BytesBuilder();
+  BytesBuilder _buf = BytesBuilder();
   bool _bufferOutput = true;
-  final Completer _done = new Completer();
-  final LockableMockHttpHeaders _headers = new LockableMockHttpHeaders();
-  final StreamController<List<int>> _stream = new StreamController<List<int>>();
+  final Completer _done = Completer();
+  final LockableMockHttpHeaders _headers = LockableMockHttpHeaders();
+  final StreamController<List<int>> _stream = StreamController<List<int>>();
 
   @override
   final List<Cookie> cookies = [];
 
   @override
   HttpConnectionInfo connectionInfo =
-      new MockHttpConnectionInfo(remoteAddress: InternetAddress.anyIPv4);
+      MockHttpConnectionInfo(remoteAddress: InternetAddress.anyIPv4);
 
   /// [copyBuffer] corresponds to `copy` on the [BytesBuilder] constructor.
   MockHttpResponse(
-      {bool copyBuffer: true,
+      {bool copyBuffer = true,
       this.statusCode,
       this.reasonPhrase,
       this.contentLength,
@@ -29,7 +29,7 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
       this.encoding,
       this.persistentConnection,
       bool bufferOutput}) {
-    _buf = new BytesBuilder(copy: copyBuffer != false);
+    _buf = BytesBuilder(copy: copyBuffer != false);
     _bufferOutput = bufferOutput != false;
     statusCode ??= 200;
   }
@@ -66,7 +66,7 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   @override
   void add(List<int> data) {
     if (_done.isCompleted)
-      throw new StateError('Cannot add to closed MockHttpResponse.');
+      throw StateError('Cannot add to closed MockHttpResponse.');
     else {
       _headers.lock();
       if (_bufferOutput == true)
@@ -79,14 +79,14 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   @override
   void addError(error, [StackTrace stackTrace]) {
     if (_done.isCompleted)
-      throw new StateError('Cannot add to closed MockHttpResponse.');
+      throw StateError('Cannot add to closed MockHttpResponse.');
     else
       _stream.addError(error, stackTrace);
   }
 
   @override
   Future addStream(Stream<List<int>> stream) {
-    var c = new Completer();
+    var c = Completer();
     stream.listen(add, onError: addError, onDone: c.complete);
     return c.future;
   }
@@ -101,8 +101,8 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
   }
 
   @override
-  Future<Socket> detachSocket({bool writeHeaders: true}) {
-    throw new UnsupportedError('MockHttpResponses have no socket to detach.');
+  Future<Socket> detachSocket({bool writeHeaders = true}) {
+    throw UnsupportedError('MockHttpResponses have no socket to detach.');
   }
 
   @override
@@ -112,7 +112,7 @@ class MockHttpResponse extends Stream<List<int>> implements HttpResponse {
 
   @override
   Future redirect(Uri location,
-      {int status: HttpStatus.movedTemporarily}) async {
+      {int status = HttpStatus.movedTemporarily}) async {
     statusCode = status ?? HttpStatus.movedTemporarily;
   }
 

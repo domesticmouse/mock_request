@@ -1,5 +1,6 @@
 # 1.0.7
-* Backwards compatible fix for Dart 2.8 changes to HttpHeaders (thanks @domesticmouse!)
+* Prepare for upcoming Dart SDK change where `HttpHeaders` methods
+`add` and `set` take an additional optional parameter `preserveHeaderCase` (thanks @domesticmouse!).
 
 # 1.0.6
 * Prepare for upcoming Dart SDK change whereby `HttpRequest` implements
